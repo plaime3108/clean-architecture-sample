@@ -1,0 +1,14 @@
+@Web.API.CNF_HostAddress = https://localhost:7036
+
+POST {{Web.API.CNF_HostAddress}}/login
+//Accept: application/json
+Content-Type: application/json
+{
+  "idCnf": 1291,
+  "countryDocument": 1,
+  "documentType": 1,
+  "documentNumber": "4475228",
+  "complement": "",
+  "issue": ""
+}
+###
