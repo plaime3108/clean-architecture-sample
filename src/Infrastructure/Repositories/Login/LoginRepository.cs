@@ -2,8 +2,8 @@
 using Dapper;
 using Domain.Entities;
 using Domain.Interfaces.Repositories;
+using Infrastructure.Configurations;
 using Infrastructure.Exceptions;
-using Infrastructure.Persistence;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Options;
 
@@ -11,9 +11,8 @@ namespace Infrastructure.Repositories.Login
 {
     public class LoginRepository : ILoginRepository
     {
-        private readonly string _connectionString;
         private readonly DatabaseSettings _dbSettings;
-
+        private readonly string _connectionString;
         public LoginRepository(IOptions<DatabaseSettings> dbSettings)
         {
             _dbSettings = dbSettings.Value;

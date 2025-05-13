@@ -2,8 +2,8 @@
 using Dapper;
 using Domain.Entities;
 using Domain.Interfaces.Repositories;
+using Infrastructure.Configurations;
 using Infrastructure.Exceptions;
-using Infrastructure.Persistence;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Options;
 

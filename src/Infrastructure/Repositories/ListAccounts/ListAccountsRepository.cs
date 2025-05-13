@@ -4,9 +4,9 @@ using Domain.Entities;
 using Application.Common.Enums;
 using Microsoft.Data.SqlClient;
 using Infrastructure.Exceptions;
-using Infrastructure.Persistence;
 using Microsoft.Extensions.Options;
 using Domain.Interfaces.Repositories;
+using Infrastructure.Configurations;
 
 namespace Infrastructure.Repositories.ListAccounts
 {
