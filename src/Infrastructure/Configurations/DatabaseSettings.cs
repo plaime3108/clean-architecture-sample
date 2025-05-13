@@ -1,5 +1,4 @@
-﻿
-namespace Infrastructure.Persistence
+﻿namespace Infrastructure.Configurations
 {
     public class DatabaseSettings
     {
