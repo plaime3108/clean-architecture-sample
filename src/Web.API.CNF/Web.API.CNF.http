@@ -12,3 +12,18 @@ Content-Type: application/json
   "issue": ""
 }
 ###
+POST {{Web.API.CNF_HostAddress}}/listAccounts
+Content-Type: application/json
+{
+  "countryDocument": 1,
+  "documentType": 1,
+  "documentNumber": "4852815",
+  "complement": "",
+  "issue": "",
+  "date": "13/05/2025",
+  "time": "16:11:38",
+  "device": "DEVICE",
+  "channel": 224,
+  "idCnf": 12584,
+  "accountType": "CTA"
+}

@@ -9,6 +9,12 @@ using System.Data;
 using Web.API.CNF.Endpoints;
 using Web.API.CNF.Extensions;
 using StackExchange.Redis;
+using Infrastructure.Repositories.ListAccounts;
+using Infrastructure.Repositories.Common;
+using Application.Interfaces.Services.Accounts;
+using Application.Services.ListAccounts;
+using Infrastructure.Services.Cache;
+using Application.Contracts.Cache;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,28 +32,31 @@ builder.Services.AddScoped<IDbConnection>(sp =>
     return new SqlConnection(config.GetConnectionString());
 });
 
-builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
-{
-    var redisConfig = sp.GetRequiredService<IOptions<RedisConfig>>().Value;
-    var configOptions = new ConfigurationOptions
-    { 
-        Password = redisConfig.Password,
-        User = redisConfig.Username,
-        //AbortOnConnectFail = false,
-        //AllowAdmin = true
-    };
-    configOptions.EndPoints.Add(redisConfig.Hostname ?? string.Empty);
-
-    return ConnectionMultiplexer.Connect(configOptions);
-});
-
 builder.Services.AddStackExchangeRedisCache(options =>
 {
+    options.ConnectionMultiplexerFactory = async () =>
+    {
+        var redisConfig = builder.Configuration.GetSection(RedisConfig.SectionName).Get<RedisConfig>();
+        var configOptions = new ConfigurationOptions
+        {
+            Password = redisConfig!.Password,
+            User = redisConfig.Username,
+            AbortOnConnectFail = false,
+            AllowAdmin = true,
+        };
+        configOptions.EndPoints.Add(redisConfig.Hostname ?? string.Empty);
+        return await ConnectionMultiplexer.ConnectAsync(configOptions);
+    };
+
     options.InstanceName = "CORE_CNF";
 });
 
-builder.Services.AddScoped<ILoginService, LoginService>();
+builder.Services.AddScoped<ILoginServices, LoginService>();
 builder.Services.AddScoped<ILoginRepository, LoginRepository>();
+builder.Services.AddScoped<IListAccountsServices, ListAccountsServices>();
+builder.Services.AddScoped<IListAccountsRepository, ListAccountsRepository>();
+builder.Services.AddScoped<ICacheService, RedisCacheService>();
+builder.Services.AddScoped<ICommonRepository, CommonRepository>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 

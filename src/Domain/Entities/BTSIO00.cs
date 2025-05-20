@@ -13,5 +13,6 @@
         public short BTSIO00Sub { get; set; }
         public short BTSIO00Top { get; set; }
         public Guid BTSIO00Guid { get; set; }
+        public string BTSIO00Fac { get; set; } = string.Empty;
     }
 }
