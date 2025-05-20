@@ -6,7 +6,7 @@ using Domain.Interfaces.Repositories;
 
 namespace Application.Services.Login
 {
-    public class LoginService : ILoginService
+    public class LoginService : ILoginServices
     {
         private readonly ILoginRepository _loginRepository;
 

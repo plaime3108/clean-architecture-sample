@@ -27,12 +27,10 @@ namespace Infrastructure.Repositories.ListAccounts
             {
                 using var conn = new SqlConnection(_connectionString);
                 await conn.OpenAsync();
-                return await conn.QueryAsync<BTSIO00>(
-                    @"SELECT BTSIO00Id, BTSIO00Emp, BTSIO00Mod, BTSIO00Suc, BTSIO00Mda, BTSIO00Pap, BTSIO00Cta, BTSIO00Ope, BTSIO00Sub, BTSIO00Top, BTSIO00Guid 
-                      FROM FSR008 
-                      INNER JOIN BTSIO00 ON BTSIO00Emp = Pgcod AND BTSIO00Cta = Ctnro 
-                      WHERE Pgcod = @Emp AND Pepais = @Pais AND Petdoc = @Tdoc AND Pendoc = @NDoc",
-                    new { Emp = _Emp, Pais = Country, TDoc = DocType, NDoc = DocNumber });
+                var resp_ = await conn.QueryAsync<BTSIO00>("ApiCoreCnfGetAccountsClient",
+                    new { @IEmp = _Emp, @IPais = Country, @ITdoc = DocType, @INDoc = DocNumber },
+                    commandType: CommandType.StoredProcedure);
+                return resp_;
             }
             catch (SqlException ex)
             {
@@ -43,59 +41,15 @@ namespace Infrastructure.Repositories.ListAccounts
                 throw new InfrastructureException(HttpStatusCode.InternalServerError, "Ha ocurrido un error interno. Por favor, inténtalo nuevamente más tarde.", ex);
             }
         }
-        public async Task<FSD001?> GetTypePersonAsync(short Country, short DocType, string DocNumber)
+        public async Task<FSD001?> GetPersonDataAsync(short Country, short DocType, string DocNumber)
         {
             try
             {
                 using var conn = new SqlConnection(_connectionString);
                 await conn.OpenAsync();
                 return await conn.QueryFirstOrDefaultAsync<FSD001>(
-                    @"SELECT Pepais, Petdoc, Pendoc, Petipo, Penom 
-                      FROM FSD001 
-                      WHERE Pepais = @Pais AND Petdoc = @Tdoc AND Pendoc = @NDoc",
-                    new { Pais = Country, TDoc = DocType, NDoc = DocNumber });
-            }
-            catch (SqlException ex)
-            {
-                throw ex.ToInfrastructureException();
-            }
-            catch (Exception ex)
-            {
-                throw new InfrastructureException(HttpStatusCode.InternalServerError, "Ha ocurrido un error interno. Por favor, inténtalo nuevamente más tarde.", ex);
-            }
-        }
-        public async Task<FSD002?> GetPersonDataAsync(short Country, short DocType, string DocNumber)
-        {
-            try
-            {
-                using var conn = new SqlConnection(_connectionString);
-                await conn.OpenAsync();
-                return await conn.QueryFirstOrDefaultAsync<FSD002>(
-                    @"SELECT Pfpais, Pftdoc, Pfndoc, Pfape1, Pfape2, Pfnom1, Pfnom2, Pfebco, Pfcant, Pffnac 
-                      FROM FSD002 
-                      WHERE Pfpais = @Pais AND Pftdoc = @Tdoc AND Pfndoc = @NDoc",
-                    new { Pais = Country, TDoc = DocType, NDoc = DocNumber });
-            }
-            catch (SqlException ex)
-            {
-                throw ex.ToInfrastructureException();
-            }
-            catch (Exception ex)
-            {
-                throw new InfrastructureException(HttpStatusCode.InternalServerError, "Ha ocurrido un error interno. Por favor, inténtalo nuevamente más tarde.", ex);
-            }
-        }
-        public async Task<FSD003?> GetDataLegalPersonAsync(short Country, short DocType, string DocNumber)
-        {
-            try
-            {
-                using var conn = new SqlConnection(_connectionString);
-                await conn.OpenAsync();
-                return await conn.QueryFirstOrDefaultAsync<FSD003>(
-                    @"SELECT Pjpais, Pjtdoc, Pjndoc, Pjrazs, Njcod, Pjfcon 
-                      FROM FSD003 
-                      WHERE Pjpais = @Pais AND Pjtdoc = @Tdoc AND Pjndoc = @NDoc",
-                    new { Pais = Country, TDoc = DocType, NDoc = DocNumber });
+                    @"ApiCoreCnfGetPersonData",
+                    new { IPais = Country, ITdoc = DocType, INDoc = DocNumber });
             }
             catch (SqlException ex)
             {
@@ -113,7 +67,7 @@ namespace Infrastructure.Repositories.ListAccounts
                 using var conn = new SqlConnection(_connectionString);
                 await conn.OpenAsync();
                 return await conn.ExecuteScalarAsync<string>(
-                    @"dbo.FBT_TipoFacultad", new { @cuenta = AccountClient }, commandType: CommandType.StoredProcedure);
+                    @"dbo.FBT_TipoFacultad", new { cuenta = AccountClient }, commandType: CommandType.StoredProcedure);
             }
             catch (SqlException ex)
             {

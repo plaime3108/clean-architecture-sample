@@ -29,6 +29,7 @@ namespace Web.API.CNF.Middleware
 
         private static Task HandleExceptionAsync(HttpContext context, Exception exception)
         {
+            exception = UnwrapException(exception);
             var (statusCode, errorMessage) = exception switch
             {
                 BridgeApplicationException apiEx => (apiEx.StatusCode, apiEx.Message),
@@ -51,8 +52,16 @@ namespace Web.API.CNF.Middleware
 
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = statusCode;
-
+            
             return context.Response.WriteAsJsonAsync(response);
+        }
+
+        private static Exception UnwrapException(Exception ex)
+        {
+            if (ex is AggregateException aggEx && aggEx.InnerExceptions.Count == 1)
+                return UnwrapException(aggEx.InnerExceptions[0]);
+            
+            return ex;
         }
     }
 }

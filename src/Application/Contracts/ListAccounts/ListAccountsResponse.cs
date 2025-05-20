@@ -20,5 +20,6 @@ namespace Application.Contracts.AccountList
         public string MaskedAccount { get; set; } = string.Empty;
         public string TextAccount { get; set; } = string.Empty;
         public short Currency { get; set; }
+        public decimal Balance { get; set; }
     }
 }
