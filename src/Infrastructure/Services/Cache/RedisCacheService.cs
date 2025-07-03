@@ -1,6 +1,4 @@
-﻿using Application.Common.Enums;
-using Application.Contracts.Cache;
-using Infrastructure.Exceptions;
+﻿using Application.Interfaces.Cache;
 using Microsoft.Extensions.Caching.Distributed;
 using System.Text.Json;
 
@@ -14,12 +12,25 @@ namespace Infrastructure.Services.Cache
         {
             _distributedCache.Remove(key);
         }
-
-        public async Task<IEnumerable<T>> SetAsync<T>(string key, Func<Task<IEnumerable<T>>> fetchFunction, TimeSpan? expiration = null)
+        //public async Task<IEnumerable<T>> SetAllAsync<T>(string key, Func<Task<IEnumerable<T>>> fetchFunction, TimeSpan? expiration = null)
+        //{
+        //    var data = await fetchFunction();
+        //    var serializedData = JsonSerializer.Serialize(data);
+        //    var options = new DistributedCacheEntryOptions
+        //    {
+        //        AbsoluteExpirationRelativeToNow = expiration ?? TimeSpan.FromHours(1)
+        //    };
+        //    await _distributedCache.SetStringAsync(key, serializedData, options);
+        //    return data;
+        //}
+        public async Task<IEnumerable<T>?> GetAllAsync<T>(string key)
         {
-            //var cachedData = await _distributedCache.GetStringAsync(key);
-            //if (!string.IsNullOrEmpty(cachedData))
-            //    return JsonSerializer.Deserialize<IEnumerable<T>>(cachedData)!;
+            var cachedData = await _distributedCache.GetStringAsync(key);
+            return string.IsNullOrEmpty(cachedData) ? null : JsonSerializer.Deserialize<IEnumerable<T>>(cachedData);
+        }
+
+        public async Task<T> SetAsync<T>(string key, Func<Task<T>> fetchFunction, TimeSpan? expiration = null)
+        {
             var data = await fetchFunction();
             var serializedData = JsonSerializer.Serialize(data);
             var options = new DistributedCacheEntryOptions
@@ -30,21 +41,10 @@ namespace Infrastructure.Services.Cache
             return data;
         }
 
-        //public async Task RefreshAsync<T>(string key, Func<Task<IEnumerable<T>>> fetchFunction, TimeSpan? expiration = null)
-        //{
-        //    var data = await fetchFunction();
-        //    var serializedData = JsonSerializer.Serialize(data);
-        //    var options = new DistributedCacheEntryOptions
-        //    {
-        //        AbsoluteExpirationRelativeToNow = expiration ?? TimeSpan.FromHours(1)
-        //    };
-        //    await _distributedCache.SetStringAsync(key, serializedData, options);
-        //}
-
-        public async Task<IEnumerable<T>?> GetAsync<T>(string key)
+        public async Task<T?> GetAsync<T>(string key)
         {
             var cachedData = await _distributedCache.GetStringAsync(key);
-            return string.IsNullOrEmpty(cachedData) ? null : JsonSerializer.Deserialize<IEnumerable<T>>(cachedData);
+            return string.IsNullOrEmpty(cachedData) ? default : JsonSerializer.Deserialize<T>(cachedData);
         }
     }
 }
