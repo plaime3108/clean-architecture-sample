@@ -8,23 +8,13 @@ namespace Infrastructure.Exceptions
         public static InfrastructureException ToInfrastructureException(this Exception ex)
         {
             string message = "Ha ocurrido un error interno. Por favor, inténtalo nuevamente más tarde.";
-            HttpStatusCode statusCode;
-            switch (ex)
+            var statusCode = ex switch
             {
-                case RedisConnectionException:
-                    statusCode = HttpStatusCode.ServiceUnavailable;
-                        break;
-                case RedisTimeoutException:
-                    statusCode = HttpStatusCode.GatewayTimeOut;
-                    break;
-                case RedisServerException:
-                    statusCode = HttpStatusCode.InternalServerError;
-                    break;
-                default:
-                    statusCode = HttpStatusCode.InternalServerError;
-                    break;
-            }
-
+                RedisConnectionException => HttpStatusCode.ServiceUnavailable,
+                RedisTimeoutException => HttpStatusCode.GatewayTimeOut,
+                RedisServerException => HttpStatusCode.InternalServerError,
+                _ => HttpStatusCode.InternalServerError,
+            };
             return new InfrastructureException(statusCode, message, ex);
         }
     }

@@ -1,7 +1,11 @@
 ﻿using Application.Contracts.AccountList;
+using Application.Contracts.Accounts;
+using Application.Contracts.Credits;
 using Application.Contracts.Login;
 using Application.Interfaces.Services.Accounts;
+using Application.Interfaces.Services.Credits;
 using Application.Interfaces.Services.Login;
+using Application.Services.Accounts;
 using Web.API.CNF.Extensions;
 
 namespace Web.API.CNF.Endpoints
@@ -28,6 +32,26 @@ namespace Web.API.CNF.Endpoints
                 else
                     return Results.Extensions.Failure(result.Error!);
             });
+
+            endpoints.MapPost("/getDetailCredit", async (GetDetailCreditRequest getDetailCreditRequest, IGetDetailCreditServices getDetailCreditServices) =>
+            {
+                var result = await getDetailCreditServices.GetDetailCreditAsync(getDetailCreditRequest);
+                if (result.IsSuccess)
+                    return Results.Ok(result.Value);
+                else
+                    return Results.Extensions.Failure(result.Error!);
+            });
+
+            endpoints.MapPost("/accountTransactions", async (AccountTransactionsRequest accountTransactionsRequest, IAccountTransactionsServices accountTransactionsServices) =>
+            {
+                var result = await accountTransactionsServices.AccountTransactionsAsync(accountTransactionsRequest);
+                if (result.IsSuccess)
+                    return Results.Ok(result.Value);
+                else
+                    return Results.Extensions.Failure(result.Error!);
+            });
+
+            //endpoints.MapGet("/health", () => Results.Ok("API CNF is running."));
 
             /************************************************////
             return endpoints;

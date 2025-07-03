@@ -8,5 +8,11 @@
         public required string DocumentNumber { get; set; }
         public string Complement { get; set; } = string.Empty;
         public string Issue { get; set; } = string.Empty;
+        public string Date { get; set; } = string.Empty;
+        public string Time { get; set; } = string.Empty;
+        public string Device { get; set; } = string.Empty;
+        public string Message { get; set; } = string.Empty;
+        public short Channel { get; set; }
+        public string TraceNumber { get; set; } = string.Empty;
     }
 }

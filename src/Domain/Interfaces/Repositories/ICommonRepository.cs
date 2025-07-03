@@ -4,6 +4,8 @@ namespace Domain.Interfaces.Repositories
 {
     public interface ICommonRepository
     {
-        Task<IEnumerable<FST005>> GetExchangeRateAllAsync();
+        Task<IEnumerable<ExchangeRates>> GetAllExchangeRateAsync();
+        Task<IEnumerable<SystemModules>> GetAllSystemModulesAsync();
+        Task<IEnumerable<ProductStatusCode>> GetAllProductStatusCodeAsync();
     }
 }
