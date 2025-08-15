@@ -12,7 +12,6 @@
         public string Time { get; set; } = string.Empty;
         public string Device { get; set; } = string.Empty;
         public string Message { get; set; } = string.Empty;
-        public short Channel { get; set; }
         public string TraceNumber { get; set; } = string.Empty;
         public int IdCnf { get; set; }
         public string AccountId { get; set; } = string.Empty;
